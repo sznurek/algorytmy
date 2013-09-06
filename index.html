@@ -1,1 +1,23 @@
-Testing
+---
+layout: default
+title: Algorytmika - Gimnazjum nr 1 w Polkowicach
+---
+
+<p>Najbliższe zajęcia odbędą się <strong>6 września o godz. 10:00</strong>.
+</p>
+
+<p>
+Zadania do samodzielnego rozwiązania znajdują się <a href="http://themis.lo14.wroc.pl">na Themisie</a>
+w sekcji G1_POLKOWICE. Hasło do sekcji zostało rozesłane mailem. Jeżeli ktoś nie dostał
+maila z hasłem proszę o kontakt: <a href="mailto:sznurek@gmail.com">sznurek@gmail.com</a>
+</p>
+
+<hr>
+
+{% for post in site.posts %}
+  <div class="post">
+      <a href="{{ post.url }}">&raquo;{{ post.title }}</a>
+      <span class="date">{{ post.date | date_to_string }}</span>
+      <p>{{ post.excerpt }}</p>
+  </div>
+{% endfor %}
