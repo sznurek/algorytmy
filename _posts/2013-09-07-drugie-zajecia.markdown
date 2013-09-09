@@ -27,9 +27,9 @@ musicie poczytać o dodatkowych komendach maszyny RAM poniżej.
 
 I kilka dodatkowych, nie omawianych na zajęciach:
 
-* `load n` - skopiuj zawatrość komórki o numerze `0` do komórki o numerze
+* `store n` - skopiuj zawatrość komórki o numerze `0` do komórki o numerze
   `n`.
-* `store n` - skopiuj zawartość komórki o numerze `n` do komórki o numerze
+* `load n` - skopiuj zawartość komórki o numerze `n` do komórki o numerze
   `0`.
 
 Jeżeli do komend `load` podamy jako argument liczbę poprzedzoną znakiem `=`
