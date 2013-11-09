@@ -1,0 +1,192 @@
+---
+layout: post
+title: Największy wspólny dzielnik
+tags: lesson
+---
+
+Na ostanich zajęciach zajmowaliśmy się dzielnikami liczb a później
+już tylko problemem znajdowania największego wspólnego dzielnika
+dwóch liczb. Ten wpis to taka mała przypominajka.
+
+## Podzielność
+
+Mówimy, że liczba `n` dzieli `m`, jeżeli po podzieleniu `m` przez `n`
+nie zostanie nam reszta. Zapisujemy to w następujący sposób: `n | m`.
+
+Dla przykładu: 4 dzieli 16 (`4 | 16`) ale 5 nie dzieli 16.
+
+## Sprawdzanie podzielności
+
+Na wcześniejszych zajęciach dowiedzieliśmy się, że w maszynie RAM
+komenda `div` to "dzielenie z podłogą". To znaczy, że po podzieleniu
+wynik zaokrąglany jest w dół.
+
+Żeby sprawdzić, czy `n` dzieli `m` musimy policzyć resztę z dzielenia
+`m` przez `n`. Taką operację nazywaliśmy operacją modulo i nauczyliśmy
+się rozwiązywać ten problem w zadaniu `RAMMOD`.
+
+## Największy wspólny dzielnik
+
+Największym dzielnikiem liczb `n` i `m` nazywamy największą taką liczbę
+`c`, że `c | n` i `c | m`. Największy wpólny dzielnik będziemy oznaczać
+przez `gcd(n, m)`. Dla przykładu:
+
+    gcd(3, 5) = 1
+    gcd(8, 4) = 4
+    gcd(6, 8) = 2
+    gcd(42, 12) = 6
+
+Jak możemy szukać największego wspólnego dzielnika?
+
+## Metoda czynników pierwszych
+
+W szkole mogliście poznać następującą metodę: rozkładaliście obie liczby
+na czynniki pierwsze a następnie wybieraliście wszystkie powtarzające się
+dzielniki. Na przykład dla liczb 42 i 12:
+
+    42 | 2    12 | 2
+    21 | 3     6 | 2
+     7 | 7     3 | 3
+     1 |       1 | 1
+
+Po obu stronach powtarzają się czynniki 2 i 3, więc `gcd(42, 12) = 6`.
+
+Taka metoda jest poprawna, niestaty mało skuteczna: ludzkość nie potrafi
+szybko rozkładać liczb na czynniki pierwsze, więc program, który szukałby
+w ten sposób największego wspólnego dzielnika byłby bardzo wolny.
+
+## Algorytm Euklidesa
+
+Na szczęście Euklides (pan, który żył w starożytnej Grecji) wymyślił
+sposób (czyli algorytm) zdecydowanie szybszy. Zanim go poznamy, dowiemy
+się jak na problem największego wspólnego dzielnika patrzył Euklides.
+
+Mówiliśmy, że zapis `6 | 42` czytamy "6 dzieli 42". Możemy przeczytać
+to inaczej: "6 mierzy 42". Dlaczego "mierzy"?
+
+Możemy pomyśleć o tym w kategoriach mierzenia odległości przy użyciu
+patyków. Wtedy o `6 | 42` możemy myśleć jak o "patykiem długości 6 m
+możemy odmierzyć długość 42 m". Z drugiej strony wiemy, że 5 nie dzieli
+16 - co znaczy tyle, że patykiem długości 5 m nie odmierzymy 16 m.
+Patyków nie można łamać i nie mamy linijki anni tym podobnych narzędzi!
+
+Pomyślmy dalej: patykiem długości 3 m nie odmierzymy 11 m. Tak samo nie
+damy rady patykiem długości 5 m. A co, gdy mamy do dyspozycji oba patyki?
+Oczywiście, że damy radę:
+
+    |---| |---| |-----| 3 + 3 + 5 = 11
+
+Widzimy, że dwa patyki osobno potrafią zmierzyć niedużo, natomiast oba
+razem dają zupełnie nowe możliwości! Czy możemy odmierzyć 2 m? Tak:
+
+      --- 1 * 3 m
+    ----- 1 * 5 m
+    
+    5 - 3 = 2
+
+Tutaj musimy trochę sprytniej układać patyki: nie musimy ich wcale
+układać obok siebie, możemy położyć je nad sobą, żeby odjąć ich
+długości.
+
+I kolejne pytanie: a odmierzymy 1 m? Co ciekawe, tak:
+
+     --------- 3 * 3 m
+    ---------- 2 * 5 m
+
+    2 * 5 - 3 * 3 = 1
+
+To może jest tak, że mając dwa patyki możemy odmierzyć każdą długość
+całkowitą. Niestety, to nie jest prawda. Weźmy patyki długości 4 m
+i 2 m - każda długość odmierzona przez nie jest liczbą patrzystą,
+więc 1 m nie uzyskamy.
+
+Nasuwa się pytanie: jaka jest najmniejsza odległość jaką można odmierzyć
+patykami o długości `n` metrów i `m` metrów?
+
+## W poszukiwaniu najmniejszej odległości
+
+Popatrzmy na patyki długości 5 m i 3 m i połóżmy je jeden na drugim.
+
+      --- 1 * 3 m
+    ----- 1 * 5 m
+
+Zauważmy, że układając patyki w ten sposób mamy do dyspozycji taki
+"wirtualny" patyk długości 2 m. Zauważmy, że te same odległości
+możemy odmierzyć parą patyków 3 m i 5 m oraz 3 m i 2 m! Czyli teraz
+wsytarczy znaleźć najmniejszą odległość jaką można odmierzyć naszymi
+krótszymi patyczkami:
+
+     -- 1 * 2 m
+    --- 1 * 3 m
+
+Teraz możemy odmierzyć odległość 1 m, czyli jest to najmniejsza odległość
+jaką możemy odmierzyć patykami długości 3 m i 5 m.
+
+Popatrzmy na bardziej skomplikowany przykład: 42 m i 12 m:
+
+                                  ------------ 12 m
+    ------------------------------------------ 42 m
+
+                      ------------ 12 m
+    ------------------------------ 30 m
+
+          ------------ 12 m
+    ------------------ 18 m
+
+          ------ 6 m
+    ------------ 12 m
+
+    ------ 6 m
+    ------ 6 m
+
+Na końcu otrzymaliśmy dwa patyki długości 6 m, czyli tak naprawdę został
+nam jeden rodzaj patyka. A w takim przypadku wiemy, że najmniejsza
+odległość jaką możemy odmierzyć to 6 m.
+
+## Co mają patyki co liczb?
+
+Czemu zajmujemy się mierzeniem odległości przy pomocy dwóch patyków zamiast
+szukać największego wspólnego dzielnika? Otóż *najmniejsza długość jaką
+możemy odmierzyć patykami długości a i b jest równa największemu wspólnemu
+dzielnikowi a i b*!
+
+Oznacza to, że naszym przykładaniem patyczków znaleźliśmy algorytm szukania
+największego wspólnego dzielnika. Oczywiście przykładanie patyczków to
+po prostu odejmowanie dwóch liczb. Czyli drugi przykład "patyczkowy" wygląda
+następująco używając samych liczb:
+
+    (42, 12) -> (30, 12) -> (18, 12) -> (12, 6) -> (6, 6)
+
+Powyższy algorytm powinno dać się w miarę łatwo przepisać do maszyna RAM.
+
+## Przyspieszamy
+
+Popatrzmy na trzy pierwsze przyłożenia patyczków w przykładzie z patykami
+długości 42 m i 12 m. Zauważmy, że 12 m cały czas przykładaliśmy do
+dłuższego patyka tak długo, aż nowy przycięty patyk nie był krótszy od
+12 m. Czemu nie zrobić tych operacji jednocześnie?
+
+          ------------------------------------ 3 * 12 m = 36 m
+    ------------------------------------------ 1 * 42 m = 42 m
+
+          ------ 1 * 6 m
+    ------------ 1 * 12 m
+
+           0 m
+    ------ 6 m
+
+Teraz wykonujemy dużo mniej kroków. Ale wracając do naszych liczb: jakiemu
+działaniu to odpowiada? Wcześniej to było po prostu odejmowanie. Popatrzmy:
+
+    (42, 12) -> (12, 6) -> (6, 0)
+
+Otóż kawałek, który nam zostanie po przyłożeniu maksymalnej iliczby patyczków
+to *reszta z dzielenia*!
+
+    42 mod 12 = 6
+    12 mod 6  = 0
+
+Teraz możemy w zwięzły sposób zapisać algorytm gcd:
+
+    gcd(a, 0) = a
+    gcd(a, b) = gcd(b, a mod b)
