@@ -3,24 +3,19 @@ layout: default
 title: Algorytmika - Gimnazjum nr 1 w Polkowicach
 ---
 
-<p>
-Zajęcia odbywają się <strong>co piątek na ósmej godzinie lekcyjnej</strong> w <strong>sali 104</strong>.
-W najbliższy czwartek odbędą się zajęcia wyrównawcze dla osób, które nie mogły być na pierwszych lub
-drugich zajęciach.
+<p class="index">
+Zajęcia odbywają się <strong>w niektóre piątki o 14:30</strong> w <strong>sali 104</strong>.
+Informacje o zajęciach można uzyskać także u p. Roberta Królikowskiego.
 </p>
 
-<p>
+<p class="index">
 Zadania do samodzielnego rozwiązania znajdują się <a href="http://themis.lo14.wroc.pl">na Themisie</a>
 w sekcji G1_POLKOWICE. Hasło do sekcji zostało rozesłane mailem. Jeżeli ktoś nie dostał
 maila z hasłem proszę o kontakt: <a href="mailto:sznurek@gmail.com">sznurek@gmail.com</a>
 </p>
 
-<hr>
-
 {% for post in site.posts %}
   <div class="post">
-      <a href="{{ site.url }}/{{ post.url }}">{{ post.title }}</a>
-      <span class="date">{{ post.date | date_to_string }}</span>
-      <p>{{ post.excerpt }}</p>
+      <a href="{{ post.url }}"><span class="date">({{ post.date | date_to_string }})</span> {{ post.title }}</a>
   </div>
 {% endfor %}

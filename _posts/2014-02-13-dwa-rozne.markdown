@@ -1,0 +1,112 @@
+---
+layout: post
+title: Dwa różne - zadanie ze sparingu
+tags: lesson
+---
+
+Podczas sparingu 31 stycznia mieliście do rozwiązania zadanie "Dwa różne"
+(jest ono dostępne [na themisie](https://themis.lo14.wroc.pl/GIMSPAR/DRO)).
+Zanim będziecie czytać dalej przypomnijcie sobie treść zadania.
+
+Zadanie można próbować rozwiązać w następujący sposób: sprawdźmy każdą
+parę liczb i znajdźmy takie dwie różne liczby, które są najdalej od siebie
+w ciągu. Jak zapisać takie rozwiązanie?
+
+Załóżmy, że mamy wczytany ciąg do tablicy `A` i jest w nim `n` elementów.
+Schemat rozwiązania wygląda następująco:
+
+{% highlight cpp %}
+int najlepsze = 0;
+
+for(int i = 0; i < n; i++) {
+  for(int j = i+1; j < n; j++) {
+    if(A[i] != A[j] && j-i > najlepsze) {
+      najlepsze = j-i;
+    }
+  }
+}
+
+cout << najlepsze << endl;
+{% endhighlight %}
+
+Sprawdźcie sami, że faktycznie `j-i` to odległość między elementami i-tym
+i j-tym (taka, jak jest opisana w treści zadania). Pytanie kontrolne: dlaczego
+wewnętrzną pętlę zaczynam od `i+1` zamiast od `0`?
+
+Przedstawiony rozwiązanie jest poprawne - sprawdzamy wszystkie możliwości,
+więc musimy trafić na wynik optymalny. Jest jednak zbyt wolne! Ile operacji
+porównania (`!=`) wykonuje powyższy program przy ciągu długości `n`?
+
+Popatrzmy na zewnętrzną pętlę. W pierwszym obiegu wykona ona `n-1` obrotów,
+ponieważ wewnętrzna pętla zacznie się wykonywać od `j = 1`. W drugim obiegu
+pętli zewnętrznej (`i = 1`) pętla w środku wykona `n-2` obrotów. I tak dalej.
+
+Zatem liczba wykonanych operacji to `(n-1) + (n-2) + (n-3) + ... + 1 =~ n^2`.
+Ostatni znak oznacza, że wynikiem tej sumy jest mniej więcej `n^2` (w jakim
+sensie mniej więcej dowiecie się na zajęciach).
+
+Patrząc na limity zadania `n` może być równe nawet `500000`, co daje około
+`250000000000`, czyli `25*10^10` operacji. Wykonanie tylu operacji będzie
+trwało wiele godzin, więc na themisie dostaniemy TLE (time limit exceeded -
+przekroczono limit czasu).
+
+## Rozwiązanie optymalne
+
+Na szczęście możemy wymyślić rozwiązanie szybsze, wykonujące mniej więcej
+`n` operacji. Rozważmy jakiś prosty przypadek.
+
+Co by się stało, gdyby pierwszy i ostatni element ciągu były różne (tj.
+`A[0] != A[n-1]`)? Wtedy znamy odpowiedź: nie ma bardziej odległych od
+siebie elementów niż elementy skrajne w ciągu. Odległość między nimi
+wynosi `(n-1)-1 = n-2`.
+
+Co gdy skrajne elementy ciągu są sobie równe? Wtedy musimy wyszukać
+dwa elementy w ciągu: najwcześniejszy element różny od `A[n-1]` oraz
+najpóźniejszy element różny od `A[0]`. Nazwijmy je odpowiednio `A[l]`
+i `A[u]`.
+
+Zobaczmy to na przykładzie: jeżeli na wejściu dostaliśmy poniższy ciąg,
+to `l = 3` i `u = 6`.
+
+    |3|3|3|4|5|3|7|3|3|3|
+           l     u
+
+Teraz zauważmy, że największą odległością między różnymi elementami
+ciągu jest odległość `A[l]` od `A[n-1]` *lub* `A[0]` od `A[u]`. Dlaczego?
+
+Na pewno są to odległości optymalne jeżeli założymy, że jedną z liczb w
+rozwiązaniu jest `A[0]` albo `A[n-1]`. Jeżeli pokażemy, że każde
+rozwiązanie optymalne musi zawierać jeden z krańców ciągu, to udowodnimy
+poprawność algorytmu.
+
+Załóżmy, że istnieje rozwiązanie optymalne, tj. para `A[i] A[j]` taka, że
+`A[i] != A[j]` i odległość między nimi jest największa możliwa. Dodatkowo
+załóżmy, że ani `i`, ani `j` nie są końcami ciągu (nie są równe `0` lub `n-1`).
+
+Co by było, gdyby `A[i-1] != A[j]`? Mielibyśmy lepsze rozwiązanie, ale przecież
+najlepszym jest `A[i] A[j]`! Zatem wiemy, że `A[i-1] = A[j]`. Powtarzając
+rozumowanie otrzymujemy, że `A[i-2] = A[j]`, `A[i-3] = A[j]`, ..., `A[0] = A[j]`.
+
+Zauważmy, że analogicznie możemy zapytać, czy `A[j+1] != A[i]`? Tak samo
+jak poprzednio wiemy, że nie może tak być. Z tego wynika, że `A[j+1] = A[i]`,
+`A[j+2] = A[i]`, ..., `A[n-1] = A[i]`.
+
+Co nam to daje? Popatrzmy: `(A[0] = A[j]) != (A[i] = A[n-1])`. Wyszło, że elementy
+skrajne są różne! Otrzymujemy sprzeczność z tym, że `A[i] A[j]` było optymalnym
+rozwiązaniem. Podsumujmy to na diagramie:
+
+    |5|5|5|5|5|4|......|5|4|4|4|4|4|
+               i        j
+
+Gdybyśmy którąkolwiek z piątek z przodu (lub czwórek z tyłu) zamienili na inną
+liczbę, otrzymalibyśmy lepsze rozwiązanie (a założyliśmy, że lepszego nie ma).
+
+## Implementacja
+
+Żeby zapisać rozwiązanie w C++ musimy potrafić znaleźć liczby `A[l]` i `A[u]`
+z powyższego opisu. Można to zrobić prostą pętlą.
+
+Poza tym trzeba uważać na następujące przypadki:
+
+- wszystkie liczby na wejściu są takie same,
+- na wejściu jest tylko jedna liczba.
