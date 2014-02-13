@@ -1,4 +1,5 @@
-url: http://sznurek.github.io/algorytmy
+url: http://sznurek.github.io
+baseurl: /algorytmy
 name: Algorytmika w Gimnazjum nr 1 w Polkowicach
 markdown: redcarpet
 pygments: true

@@ -16,6 +16,6 @@ maila z hasłem proszę o kontakt: <a href="mailto:sznurek@gmail.com">sznurek@gm
 
 {% for post in site.posts %}
   <div class="post">
-      <a href="{{ post.url }}"><span class="date">({{ post.date | date_to_string }})</span> {{ post.title }}</a>
+      <a href="{{ site.baseurl }}{{ post.url }}"><span class="date">({{ post.date | date_to_string }})</span> {{ post.title }}</a>
   </div>
 {% endfor %}
